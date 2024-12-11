@@ -1,0 +1,113 @@
+version: "1.0.0"
+server:
+  app_name:         # 应用名称，默认值 "ChatDoc"
+  debug:            # 是否启用调试模式，默认值 false
+  host:             # 绑定的主机地址，默认值 "0.0.0.0"
+  port:             # 绑定端口号，默认值 8000
+  env:              # 运行环境，默认值 "production"
+
+app:
+  openapi_yaml_path:                    # openapi.yaml 路径，默认值 "$BASE_DIR/docs/openapi/openapi.yaml"
+  base_dir:                             # 应用的基础目录，默认值为仓库根目录
+  file_list_max_size:                   # 文件列表最大大小，默认值 10000
+  chat_max_file_count:                  # 单次问答最大文件数量，默认值 20
+  wf_parse:
+    embedding_concurrency:              # 上传embedding的并发embedding数量，默认20
+    embedding_batch_size:               # 上传embedding的batch_size，默认32
+    insert_es_batch_size:               # 批量插入es的batch_size，默认3000
+    insert_es_with_vector_batch_size:   # 批量插入带向量的es的batch_size，默认300
+    insert_es_concurrency:              # 批量插入es的并发数量，默认20
+  wf_chat:
+    rough_rank_score:                   # 检索粗排的top-p，默认0.9
+    retrieve_top_n:                     # top-n，默认15
+    retrieval_max_length:               # retrieval_max_length 默认30000
+    rough_rank_score:                   # 检索粗排的top-p，默认0.9
+    rerank_score:                       # 答案洗排的top-p，默认0.9
+  wf_global_chat:
+    rough_rank_score:                   # 检索粗排的top-p，默认0.9
+    retrieve_top_n:                     # top-n，默认15
+    retrieval_max_length:               # retrieval_max_length 默认30000
+    rough_rank_score:                   # 检索粗排的top-p，默认0.9
+    rerank_score:                       # 答案洗排的top-p，默认0.9
+
+llm:
+  llm:                                  # 使用大模型，默认qwen，可选qwen|deepseek|gpt
+  qwen:
+    model:                              # qwen的模型，默认qwen-plus
+    url:                                # qwen的地址，默认https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+    api_key:                            # qwen的api_key，默认"sk-XXX"
+    max_token:                          # qwen的max_token，默认2000
+    top_p:                              # top_p，默认0.9
+    temperature:                        # temperature，默认0.1
+    presence_penalty:                   # presence_penalty，默认2.0
+    enable_search:                      # 是否启用检索，默认false
+
+  deepseek:
+    model:                              # deepseek的模型，默认deepseek-chat
+    url:                                # deepseek的地址，默认https://api.deepseek.com
+    api_key:                            # deepseek的api_key，默认"sk-XXX"
+    max_token:                          # deepseek的max_token，默认2000
+    top_p:                              # top_p，默认0.9
+    temperature:                        # temperature，默认0.1
+    presence_penalty:                   # presence_penalty，默认2.0
+
+  gpt:
+    model:                              # gpt的模型，默认gpt-3.5-turbo
+    url:                                # gpt的地址，默认https://api.openai.com/v1
+    api_key:                            # gpt的api_key，默认"sk-XXX"
+    max_token:                          # gpt的max_token，默认2000
+    top_p:                              # top_p，默认0.9
+    temperature:                        # temperature，默认0.1
+    presence_penalty:                   # presence_penalty，默认2.0
+
+  
+log:
+  log_level:        # 日志级别，默认值 "INFO"
+  log_retention:    # 日志保留时间，默认值 "14 days"
+
+api:
+  pdf2md:
+    url:                        # url, 默认值 https://api.textin.com/ai/service/v1/pdf_to_markdown
+    download_url:               # download_url, 默认值 "https://api.textin.com/ocr_image/download"
+    app_id:                     # app_id，默认值 xxx_app_id
+    app_secret:                 # app_secret xxx_app_secret
+    options_dpi:                # DPI 设置，默认值 72
+    options_page_start:         # 开始页码，默认值 0
+    options_page_count:         # 页数限制，默认值 2000
+    options_apply_document_tree: # 是否应用文档树，默认值 1
+    options_markdown_details:   # 是否包含 Markdown 详情，默认值 1
+    options_page_details:       # 是否包含页面详情，默认值 1
+    options_char_details:       # 是否包含字符详情，默认值 1
+    options_table_flavor:       # 表格风格，默认值 "html"
+    options_get_image:          # 获取图像的方式，默认值 "page"
+    options_parse_mode:         # 解析模式，默认值 "auto"
+
+  embedding:
+    url:                        # url, 默认值"http://gpt-qa-embedding.ai.intsig.net/get_embedding"
+    dimension:                  # 向量维度，默认值 1024
+    digit:                      # 向量精度，默认值 8
+
+  rerank:
+    url:                        # url, 默认值 "http://gpt-qa-rerank.ai.intsig.net/rerank"
+
+elasticsearch:
+  hosts:                        # Elasticsearch 主机地址，默认值为 "http://chatdoc-es-sandbox.ai.intsig.net:80"
+  username:                     # Elasticsearch 用户名，默认值 "elastic"
+  password:                     # Elasticsearch 密码，默认值 "XXXXX"
+  conn_timeout:                 # 连接超时时间，默认值 30
+  conn_max_retries:             # 重试次数，默认值 5
+  index_file:                   # 文件索引，默认值 "v1_file"
+  index_origin_slice:           # 原始数据切片索引，默认值 "v1_origin_slice"
+  index_table_row_slice:        # 表格行切片索引，默认值 "v1_table_row_slice"
+  index_paragraph_slice:        # 段落切片索引，默认值 "v1_paragraph_slice"
+  index_settings:
+    number_of_shards:           # 分片数量，默认值 1
+    number_of_replicas:         # 副本数量，默认值 0
+    refresh_interval:           # 刷新间隔，默认值 "200ms"
+
+minio:
+  endpoint:                     # MinIO 端点，默认值 "127.0.0.1:9000"
+  access_key:                   # MinIO 访问密钥，默认值 "XXX"
+  secret_key:                   # MinIO 密钥，默认值 "XXX"
+  use_ssl:                      # 是否使用 SSL，默认值 false
+  bucket:                       # 存储桶名称，默认值 "chatdoc"

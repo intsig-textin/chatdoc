@@ -1,0 +1,460 @@
+components:
+  schemas:
+    Body_parse_file_api_v1_doc_parse_post:
+      properties:
+        file:
+          format: binary
+          title: File
+          type: string
+      required:
+      - file
+      title: Body_parse_file_api_v1_doc_parse_post
+      type: object
+    ChatRequest:
+      properties:
+        file_ids:
+          items:
+            type: string
+          title: File Ids
+          type: array
+        question:
+          title: Question
+          type: string
+        stream:
+          default: false
+          title: Stream
+          type: boolean
+      required:
+      - file_ids
+      - question
+      title: ChatRequest
+      type: object
+    ChatResponse:
+      properties:
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+        retrieval:
+          default: []
+          items:
+            $ref: '#/components/schemas/RetrieveContextResponse'
+          title: Retrieval
+          type: array
+        stream_content:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/StreamContentSchema'
+              - $ref: '#/components/schemas/StreamFinishSchema'
+              - $ref: '#/components/schemas/StreamRetrieveContextResponse'
+              - type: object
+            type: array
+          - type: 'null'
+          title: Stream Content
+        total_tokens:
+          default: 0
+          title: Total Tokens
+          type: integer
+      title: ChatResponse
+      type: object
+    DocParagraphMetaTreeSchema:
+      description: 存入ES中的结构，用于Small2Big扩充使用，所以仅存一些Small2Big中用到的关键属性即可，存入到file表当中
+      properties:
+        children:
+          items:
+            $ref: '#/components/schemas/DocParagraphMetaTreeSchema'
+          title: Children
+          type: array
+        leaf:
+          default: false
+          title: Leaf
+          type: boolean
+        level:
+          default: 1
+          title: Level
+          type: integer
+        origin_slice_uuid:
+          default: ''
+          title: Origin Slice Uuid
+          type: string
+        token_length:
+          default: 0
+          title: Token Length
+          type: integer
+        tree_token_length:
+          default: 0
+          title: Tree Token Length
+          type: integer
+        uuid:
+          default: ''
+          title: Uuid
+          type: string
+      required:
+      - children
+      title: DocParagraphMetaTreeSchema
+      type: object
+    FileDeleteResponse:
+      properties:
+        file_delete_count:
+          title: File Delete Count
+          type: integer
+        origin_slice_delete_count:
+          title: Origin Slice Delete Count
+          type: integer
+        paragraph_slice_delete_count:
+          title: Paragraph Slice Delete Count
+          type: integer
+        table_slice_delete_count:
+          title: Table Slice Delete Count
+          type: integer
+      required:
+      - file_delete_count
+      - origin_slice_delete_count
+      - table_slice_delete_count
+      - paragraph_slice_delete_count
+      title: FileDeleteResponse
+      type: object
+    FileListResponse:
+      properties:
+        files:
+          items:
+            $ref: '#/components/schemas/FileMetaSchema'
+          title: Files
+          type: array
+      required:
+      - files
+      title: FileListResponse
+      type: object
+    FileMetaSchema:
+      properties:
+        created_at:
+          default: '2024-11-30T23:34:15.485116'
+          format: date-time
+          title: Created At
+          type: string
+        extra:
+          anyOf:
+          - type: object
+          - type: 'null'
+          title: Extra
+        file_id:
+          title: File Id
+          type: string
+        file_name:
+          title: File Name
+          type: string
+        keywords:
+          default: []
+          items:
+            type: string
+          title: Keywords
+          type: array
+        paragraph_slices_meta:
+          anyOf:
+          - $ref: '#/components/schemas/DocParagraphMetaTreeSchema'
+          - type: 'null'
+        thumbnail:
+          default: ''
+          title: Thumbnail
+          type: string
+      required:
+      - file_name
+      - file_id
+      title: FileMetaSchema
+      type: object
+    FileParseResponse:
+      properties:
+        file_meta:
+          anyOf:
+          - $ref: '#/components/schemas/FileMetaSchema'
+          - type: 'null'
+      required:
+      - file_meta
+      title: FileParseResponse
+      type: object
+    GlobalChatRequest:
+      properties:
+        question:
+          title: Question
+          type: string
+        stream:
+          default: false
+          title: Stream
+          type: boolean
+      required:
+      - question
+      title: GlobalChatRequest
+      type: object
+    GlobalChatResponse:
+      properties:
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+        retrieval:
+          default: []
+          items:
+            $ref: '#/components/schemas/RetrieveContextResponse'
+          title: Retrieval
+          type: array
+        stream_content:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/StreamContentSchema'
+              - $ref: '#/components/schemas/StreamFinishSchema'
+              - $ref: '#/components/schemas/StreamRetrieveContextResponse'
+              - type: object
+            type: array
+          - type: 'null'
+          title: Stream Content
+        total_tokens:
+          default: 0
+          title: Total Tokens
+          type: integer
+      title: GlobalChatResponse
+      type: object
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          title: Detail
+          type: array
+      title: HTTPValidationError
+      type: object
+    RetrieveContextResponse:
+      description: RetrieveContext 中的Meta信息
+      properties:
+        file_id:
+          default: ''
+          title: File Id
+          type: string
+        ori_ids:
+          default: []
+          items:
+            type: string
+          title: Ori Ids
+          type: array
+        retrieval_type:
+          default: ''
+          title: Retrieval Type
+          type: string
+        tree_text:
+          default: ''
+          title: Tree Text
+          type: string
+      title: RetrieveContextResponse
+      type: object
+    StreamContentSchema:
+      properties:
+        delta:
+          default: ''
+          title: Delta
+          type: string
+      title: StreamContentSchema
+      type: object
+    StreamFinishSchema:
+      properties:
+        content:
+          default: ''
+          title: Content
+          type: string
+        total_token:
+          default: 0
+          title: Total Token
+          type: integer
+      title: StreamFinishSchema
+      type: object
+    StreamRetrieveContextResponse:
+      properties:
+        retrieval:
+          items:
+            $ref: '#/components/schemas/RetrieveContextResponse'
+          title: Retrieval
+          type: array
+      required:
+      - retrieval
+      title: StreamRetrieveContextResponse
+      type: object
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          title: Location
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+      type: object
+info:
+  title: chatdoc
+  version: 0.1.0
+openapi: 3.1.0
+paths:
+  /api/v1/chat/files:
+    post:
+      description: 文件列表问答
+      operationId: chat_files_api_v1_chat_files_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Chat Files
+      tags:
+      - chat
+  /api/v1/chat/global:
+    post:
+      description: 全局问答
+      operationId: chat_global_api_v1_chat_global_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GlobalChatRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalChatResponse'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Chat Global
+      tags:
+      - chat
+  /api/v1/doc/files:
+    get:
+      description: 获取所有已上传的文件元数据
+      operationId: list_files_api_v1_doc_files_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileListResponse'
+          description: Successful Response
+      summary: List Files
+      tags:
+      - doc
+  /api/v1/doc/parse:
+    post:
+      description: 上传文件，返回文件元数据
+      operationId: parse_file_api_v1_doc_parse_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_parse_file_api_v1_doc_parse_post'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileParseResponse'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Parse File
+      tags:
+      - doc
+  /api/v1/doc/{file_id}:
+    delete:
+      description: 删除文件，返回文件元数据
+      operationId: delete_file_api_v1_doc__file_id__delete
+      parameters:
+      - in: path
+        name: file_id
+        required: true
+        schema:
+          title: File Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileDeleteResponse'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Delete File
+      tags:
+      - doc
+  /api/v1/minio/{file_path}:
+    get:
+      description: '下载文件（通过 MinIO 路径）
+
+        :param file_path: MinIO 中的文件路径（例如 "folder/subfolder/file.txt"）'
+      operationId: download_minio_file_api_v1_minio__file_path__get
+      parameters:
+      - in: path
+        name: file_path
+        required: true
+        schema:
+          title: File Path
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Download Minio File
+      tags:
+      - minio
+servers:
+- description: Production server
+  url: https://api.example.com
+- description: Development server
+  url: http://localhost:8000
